@@ -6,8 +6,8 @@ Plataforma de e-commerce dedicada a conectar artesãos da região de Quixadá e 
 
 ## :technologist: Membros da equipe
 
-Amanda Silva de Oliveira - 555298 - Sistemas de informação␣␣
-Carlos Jeferson Jacinto da Silva - 552568 - Sistemas de informação␣␣
+Amanda Silva de Oliveira - 555298 - Sistemas de informação  
+Carlos Jeferson Jacinto da Silva - 552568 - Sistemas de informação  
 Ruan da Silva Araujo - 542084 - Sistemas de informação
 
 ## :bulb: Objetivo Geral
