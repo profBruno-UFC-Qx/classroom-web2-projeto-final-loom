@@ -1,0 +1,15 @@
+{
+    "users": [
+        {"id": 1, "name": "Alice Admin", "email": "admin@email.com", "role": "admin" },
+        {"id": 2, "name": "Bob Artesão", "email": "bob@email.com", "role": "artesao" },
+        {"id": 3, "name": "Charlie Cliente", "email": "charlie@email.com", "role": "cliente" }
+    ], 
+    "artesaos": [
+        {"id": 1, "userId": 2, "name": "Bob Artesão", "city": "Quixadá", "bio": "Artesão especializado em madeira.", "profile_image_url": "https://i.pravatar.cc/150?img=1" }
+    ],
+    "products": [
+        {"id": 1, "artesaoId": 1, "name": "Escultura de Madeira", "description": "Escultura feita à mão em madeira de lei.", "price": 150.00, "category": "esculturas", "image_url": "https://via.placeholder.com/150" },
+        {"id": 2, "artesaoId": 1, "name": "Caixa de Joias", "description": "Caixa de joias entalhada com detalhes finos.", "price": 80.00, "category": "caixas", "image_url": "https://via.placeholder.com/150" },
+        {"id": 3, "artesaoId": 1, "name": "Móvel Rústico", "description": "Móvel rústico feito com madeira reciclada.", "price": 300.00, "category": "moveis", "image_url": "https://via.placeholder.com/150" }
+    ]
+}
