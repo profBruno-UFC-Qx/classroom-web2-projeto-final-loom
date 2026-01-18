@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --primary: #ec7f13;
+    --background-light: #f8f7f6;
+    --background-dark: #221910;
+    --surface-light: #f3ede7;
+    --surface-dark: #2a2016;
+    --text-light: #1b140d;
+    --text-dark: #f8f7f6;
+    --text-muted-light: #9a734c;
+    --text-muted-dark: #a18a73;
+    --border-light: #f3ede7;
+    --border-dark: #3a2d20;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont,
+      'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+      'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  .text-primary { color: var(--primary); }
+  .bg-primary { background-color: var(--primary); }
+
+  .bg-background-light { background-color: var(--background-light); }
+  .bg-background-dark { background-color: var(--background-dark); }
+
+  .bg-surface-light { background-color: var(--surface-light); }
+  .bg-surface-dark { background-color: var(--surface-dark); }
+
+  .text-text-light { color: var(--text-light); }
+  .text-text-dark { color: var(--text-dark); }
+
+  .text-text-muted-light { color: var(--text-muted-light); }
+  .text-text-muted-dark { color: var(--text-muted-dark); }
+
+  .border-border-light { border-color: var(--border-light); }
+  .border-border-dark { border-color: var(--border-dark); }
+}
