@@ -1,22 +1,25 @@
 import { Request, Response } from "express";
-import { AppDataSource } from "../database/data-source";
-import { User } from "../entities/User";
+import { CreateUserService } from "../services/CreateUserService";
 
 export class UserController {
-  async create(req: Request, res: Response) {
-    const { name, email } = req.body;
+  async create(request: Request, response: Response) {
+    const { nome, email, senha, tipo_usuario } = request.body;
 
-    const userRepository = AppDataSource.getRepository(User);
+    const createUserService = new CreateUserService();
 
-    const user = userRepository.create({ name, email });
-    await userRepository.save(user);
+    try {
+      const user = await createUserService.execute({
+        nome,
+        email,
+        senha,
+        tipo_usuario,
+      });
 
-    return res.status(201).json(user);
-  }
-
-  async list(req: Request, res: Response) {
-    const userRepository = AppDataSource.getRepository(User);
-    const users = await userRepository.find();
-    return res.json(users);
+      return response.status(201).json(user);
+    } catch (err: any) {
+      return response.status(400).json({
+        error: err.message,
+      });
+    }
   }
 }
