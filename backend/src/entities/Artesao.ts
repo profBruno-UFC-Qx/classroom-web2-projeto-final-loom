@@ -12,30 +12,30 @@ import { User } from "./User";
 @Entity("artesaos")
 export class Artesao {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  nome_loja: string;
+  nome_loja!: string;
 
   @Column({ nullable: true })
-  bio: string;
+  bio?: string;
 
   @Column({ nullable: true })
-  telefone: string;
+  telefone?: string;
 
   @Column({ nullable: true })
-  cidade: string;
+  cidade?: string;
 
   @Column({ nullable: true })
-  foto_perfil: string;
+  foto_perfil?: string;
 
   @OneToOne(() => User)
   @JoinColumn({ name: "user_id" })
-  user: User;
+  user!: User;
 
   @CreateDateColumn()
-  created_at: Date;
+  created_at!: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updated_at!: Date;
 }

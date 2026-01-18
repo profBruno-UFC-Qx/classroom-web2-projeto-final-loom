@@ -4,33 +4,31 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
-  OneToOne,
 } from "typeorm";
 
 @Entity("users")
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  nome: string;
+  nome!: string;
 
   @Column({ unique: true })
-  email: string;
+  email!: string;
 
   @Column()
-  senha: string;
+  senha!: string;
 
   @Column({
     type: "text",
     default: "CLIENTE",
   })
-  tipo_usuario: "ADMIN" | "ARTESAO" | "CLIENTE";
+  tipo_usuario!: "ADMIN" | "ARTESAO" | "CLIENTE";
 
   @CreateDateColumn()
-  created_at: Date;
+  created_at!: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updated_at!: Date;
 }
