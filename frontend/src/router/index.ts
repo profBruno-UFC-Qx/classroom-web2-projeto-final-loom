@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/views/public/Home.vue'
 import Login from '@/views/auth/Login.vue'
+import Register from '@/views/auth/Register.vue'
 import Dashboard from '@/views/private/Dashboard.vue'
 import Admin from '@/views/private/Admin.vue'
 import { useAuthStore } from '@/stores/auth.store'
@@ -8,23 +9,41 @@ import { useAuthStore } from '@/stores/auth.store'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', component: Home },
+    {
+      path: '/',
+      component: Home,
+      meta: { layout: 'default' }
+    },
 
-    { path: '/login', component: Login },
+    {
+      path: '/login',
+      component: Login,
+      meta: { layout: 'auth' }
+    },
+
+    {
+      path: '/register',
+      component: Register,
+      meta: { layout: 'auth' }
+    },
 
     {
       path: '/dashboard',
-      name: 'dashboard',
-      component: () => import('@/views/private/Dashboard.vue'),
+      component: Dashboard,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        layout: 'default'
       }
     },
 
     {
       path: '/admin',
       component: Admin,
-      meta: { requiresAuth: true, role: 'ADMIN' }
+      meta: {
+        requiresAuth: true,
+        role: 'ADMIN',
+        layout: 'default'
+      }
     }
   ]
 })
