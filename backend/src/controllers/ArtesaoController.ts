@@ -1,46 +1,39 @@
 import { Request, Response } from "express";
-import { CreateArtesaoService } from "../services/CreateArtesaoService";
 import { AppDataSource } from "../database/data-source";
 import { Artesao } from "../entities/Artesao";
-
+import { CreateArtesaoService } from "../services/CreateArtesaoService";
+import { ListArtesoesService } from "../services/ListArtesoesService";
+import { ListProdutosPorArtesaoService } from "../services/ListProdutosPorArtesaoService";
 
 export class ArtesaoController {
-  async create(request: Request, response: Response) {
-  const userId = request.user.id;
-  const { nome_loja, bio, telefone, cidade, foto_perfil } = request.body;
+   async create(request: Request, response: Response) {
+    try {
+      const userId = request.user.id;
+      const { nome_loja, bio, telefone, cidade, foto_perfil } = request.body;
 
-  if (!nome_loja) {
-    return response.status(400).json({
-      error: "nome_loja é obrigatório",
-    });
-  }
+      if (!nome_loja) {
+        return response.status(400).json({
+          error: "nome_loja é obrigatório",
+        });
+      }
 
-  const artesaoRepository = AppDataSource.getRepository(Artesao);
+      const createArtesaoService = new CreateArtesaoService();
 
-  const artesaoExiste = await artesaoRepository.findOne({
-    where: {
-      user: { id: userId },
-    },
-  });
+      const artesao = await createArtesaoService.execute({
+        userId,
+        nome_loja,
+        bio,
+        telefone,
+        cidade,
+        foto_perfil,
+      });
 
-  if (artesaoExiste) {
-    return response.status(400).json({
-      error: "Perfil de artesão já existe",
-    });
-  }
-
-  const artesao = artesaoRepository.create({
-    nome_loja,
-    bio,
-    telefone,
-    cidade,
-    foto_perfil,
-    user: { id: userId },
-  });
-
-  await artesaoRepository.save(artesao);
-
-  return response.status(201).json(artesao);
+      return response.status(201).json(artesao);
+    } catch (error: any) {
+      return response.status(400).json({
+        error: error.message,
+      });
+    }
   }
 
   async me(request: Request, response: Response) {
@@ -65,34 +58,61 @@ export class ArtesaoController {
   }
 
   async update(request: Request, response: Response) {
-  const userId = request.user.id;
-  const { nome_loja, bio, telefone, cidade, foto_perfil } = request.body;
+    const userId = request.user.id;
+    const { nome_loja, bio, telefone, cidade, foto_perfil } = request.body;
 
-  const artesaoRepository = AppDataSource.getRepository(Artesao);
+    const artesaoRepository = AppDataSource.getRepository(Artesao);
 
-  const artesao = await artesaoRepository.findOne({
-    where: {
-      user: { id: userId },
-    },
-  });
-
-  if (!artesao) {
-    return response.status(404).json({
-      error: "Perfil de artesão não encontrado",
+    const artesao = await artesaoRepository.findOne({
+      where: {
+        user: { id: userId },
+      },
     });
+
+    if (!artesao) {
+      return response.status(404).json({
+        error: "Perfil de artesão não encontrado",
+      });
+    }
+
+    artesao.nome_loja = nome_loja ?? artesao.nome_loja;
+    artesao.bio = bio ?? artesao.bio;
+    artesao.telefone = telefone ?? artesao.telefone;
+    artesao.cidade = cidade ?? artesao.cidade;
+    artesao.foto_perfil = foto_perfil ?? artesao.foto_perfil;
+
+    await artesaoRepository.save(artesao);
+
+    return response.json(artesao);
   }
 
+  async index(request: Request, response: Response) {
+    const { page, limit, cidade, nome_loja } = request.query;
 
-  artesao.nome_loja = nome_loja ?? artesao.nome_loja;
-  artesao.bio = bio ?? artesao.bio;
-  artesao.telefone = telefone ?? artesao.telefone;
-  artesao.cidade = cidade ?? artesao.cidade;
-  artesao.foto_perfil = foto_perfil ?? artesao.foto_perfil;
+    const service = new ListArtesoesService();
 
+    const artesoes = await service.execute({
+      page: Number(page) || 1,
+      limit: Number(limit) || 10,
+      cidade: cidade as string,
+      nome_loja: nome_loja as string,
+    });
 
-  await artesaoRepository.save(artesao);
+    return response.json(artesoes);
+  }
 
-  return response.json(artesao);
-}
+  async produtos(request: Request, response: Response) {
+    const { id } = request.params;
+    const { page, limit } = request.query;
 
+    const service = new ListProdutosPorArtesaoService();
+
+    const produtos = await service.execute({
+      artesao_id: Number(id),
+      page: Number(page) || 1,
+      limit: Number(limit) || 10,
+    });
+
+    return response.json(produtos);
+  }
 }

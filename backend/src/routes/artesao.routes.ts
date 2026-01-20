@@ -23,5 +23,12 @@ artesaoRoutes.put(
   artesaoController.update
 );
 
+artesaoRoutes.get("/artesoes", artesaoController.index);
+
+artesaoRoutes.get(
+  "/artesoes/:id/produtos",
+  artesaoController.produtos
+);
+
 
 export default artesaoRoutes;
