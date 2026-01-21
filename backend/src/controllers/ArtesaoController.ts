@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../database/data-source";
 import { Artesao } from "../entities/Artesao";
+import { User } from "../entities/User";
 import { CreateArtesaoService } from "../services/CreateArtesaoService";
 import { ListArtesoesService } from "../services/ListArtesoesService";
 import { ListProdutosPorArtesaoService } from "../services/ListProdutosPorArtesaoService";
 
 export class ArtesaoController {
-   async create(request: Request, response: Response) {
+  async create(request: Request, response: Response) {
     try {
       const userId = request.user.id;
       const { nome_loja, bio, telefone, cidade, foto_perfil } = request.body;
@@ -27,6 +28,11 @@ export class ArtesaoController {
         cidade,
         foto_perfil,
       });
+
+      // ✅ segurança: se vier user junto, remove senha
+      if ((artesao as any).user?.senha) {
+        delete (artesao as any).user.senha;
+      }
 
       return response.status(201).json(artesao);
     } catch (error: any) {
@@ -54,6 +60,11 @@ export class ArtesaoController {
       });
     }
 
+    // ✅ segurança: remove senha
+    if ((artesao as any).user?.senha) {
+      delete (artesao as any).user.senha;
+    }
+
     return response.json(artesao);
   }
 
@@ -67,6 +78,7 @@ export class ArtesaoController {
       where: {
         user: { id: userId },
       },
+      relations: ["user"],
     });
 
     if (!artesao) {
@@ -82,6 +94,11 @@ export class ArtesaoController {
     artesao.foto_perfil = foto_perfil ?? artesao.foto_perfil;
 
     await artesaoRepository.save(artesao);
+
+    // ✅ segurança: remove senha
+    if ((artesao as any).user?.senha) {
+      delete (artesao as any).user.senha;
+    }
 
     return response.json(artesao);
   }
@@ -114,5 +131,68 @@ export class ArtesaoController {
     });
 
     return response.json(produtos);
+  }
+
+  // ✅ NOVO: SHOW artesão por id
+  async show(request: Request, response: Response) {
+    const { id } = request.params;
+
+    const artesaoRepository = AppDataSource.getRepository(Artesao);
+
+    const artesao = await artesaoRepository.findOne({
+      where: { id: Number(id) },
+      relations: ["user"],
+    });
+
+    if (!artesao) {
+      return response.status(404).json({
+        error: "Artesão não encontrado",
+      });
+    }
+
+    // ✅ segurança: remove senha
+    if ((artesao as any).user?.senha) {
+      delete (artesao as any).user.senha;
+    }
+
+    return response.json(artesao);
+  }
+
+  // ✅ NOVO: DELETE meu perfil de artesão
+  async deleteMe(request: Request, response: Response) {
+    try {
+      const userId = request.user.id;
+
+      const userRepository = AppDataSource.getRepository(User);
+      const artesaoRepository = AppDataSource.getRepository(Artesao);
+
+      const user = await userRepository.findOne({ where: { id: userId } });
+
+      if (!user) {
+        return response.status(404).json({ error: "Usuário não encontrado" });
+      }
+
+      if (user.tipo_usuario !== "ARTESAO") {
+        return response.status(403).json({
+          error: "Apenas usuários ARTESAO podem remover perfil de artesão",
+        });
+      }
+
+      const artesao = await artesaoRepository.findOne({
+        where: { user: { id: userId } },
+      });
+
+      if (!artesao) {
+        return response.status(404).json({
+          error: "Perfil de artesão não encontrado",
+        });
+      }
+
+      await artesaoRepository.remove(artesao);
+
+      return response.json({ message: "Perfil de artesão removido com sucesso" });
+    } catch (error: any) {
+      return response.status(400).json({ error: error.message });
+    }
   }
 }
