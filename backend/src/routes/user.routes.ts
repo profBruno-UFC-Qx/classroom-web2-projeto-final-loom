@@ -8,22 +8,30 @@ const userController = new UserController();
 
 userRoutes.post("/", userController.create);
 
-userRoutes.get("/me", ensureAuthenticated, (req, res) => {
-  return res.json({
-    message: "Usuário autenticado",
-    user: req.user,
-  });
-});
-
 userRoutes.get(
-  "/admin",
+  "/",
   ensureAuthenticated,
   ensureRole(["ADMIN"]),
-  (req, res) => {
-    return res.json({
-      message: "Bem-vindo, administrador",
-    });
-  }
+  userController.index
+);
+
+userRoutes.get(
+  "/:id",
+  ensureAuthenticated,
+  ensureRole(["ADMIN"]),
+  userController.show
+);
+
+userRoutes.put(
+  "/me",
+  ensureAuthenticated,
+  userController.updateMe
+);
+
+userRoutes.delete(
+  "/me",
+  ensureAuthenticated,
+  userController.deleteMe
 );
 
 export default userRoutes;
